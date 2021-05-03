@@ -1,0 +1,10 @@
+{
+  "include": ["lib/**/*.js", "test/**/*.js"],
+  "compilerOptions": {
+    "allowJs": true,
+    "declaration": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "outDir": "dist"
+  }
+}
