@@ -3,7 +3,7 @@ import File from './file.js';
 export default class Mime {
   constructor () {
     this.types = {};
-    const mime = JSON.parse(File.currentFile().sibling('mime.json').readFileSync());
+    const mime = JSON.parse(File.currentFile().sibling('..', 'vendor', 'mime.json').readFileSync());
     for (const [type, data] of Object.entries(mime)) {
       for (const ext of data.extensions) {
         if (this.types[ext] === undefined) this.types[ext] = [];
