@@ -7,7 +7,7 @@ import App from './app.js';
 import File from './file.js';
 import Logger from './logger.js';
 
-export default function mojo (options) {
+export default function mojo (options: {mode?: string}) : App {
   const app = new App(options);
   app.mojo = mojo;
   app.home = File.callerFile().dirname();
