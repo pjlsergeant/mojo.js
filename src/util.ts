@@ -3,15 +3,15 @@ import {promisify} from 'util';
 export async function captureOutput (options: {
   stderr?: boolean,
   stdout?: boolean
-}, fn: Function) {
+}, fn: Function) : Promise<string | Buffer> {
   if (typeof options === 'function') fn = options;
   if (options.stdout === undefined) options.stdout = true;
 
-  const output: Uint8Array[] & string[] = [];
+  const output:string[] & Uint8Array[] = [];
   const stdoutWrite = process.stdout.write;
   const stderrWrite = process.stderr.write;
-  if (options.stdout) process.stdout.write = (chunk: Uint8Array & string) :boolean => !!output.push(chunk);
-  if (options.stderr) process.stderr.write = (chunk: Uint8Array & string) :boolean => !!output.push(chunk);
+  if (options.stdout) process.stdout.write = (chunk: string & Uint8Array) :boolean => !!output.push(chunk);
+  if (options.stderr) process.stderr.write = (chunk: string & Uint8Array) :boolean => !!output.push(chunk);
 
   try {
     await fn();
@@ -23,7 +23,7 @@ export async function captureOutput (options: {
   return output.length && Buffer.isBuffer(output[0]) ? Buffer.concat(output) : output.join('');
 }
 
-export function decodeURIComponentSafe (value: string) {
+export function decodeURIComponentSafe (value: string) : string | null {
   try {
     return decodeURIComponent(value);
   } catch (error) {
@@ -33,7 +33,7 @@ export function decodeURIComponentSafe (value: string) {
 
 export const sleep = promisify(setTimeout);
 
-export function tablify (rows: string[][]) {
+export function tablify (rows: string[][]) : string {
   const spec = [];
 
   const table = rows.map(row => {
