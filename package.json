@@ -18,6 +18,7 @@
   "homepage": "https://mojojs.org",
   "scripts": {
     "build": "rm -r lib; npx tsc",
+    "build:test": "npm run build; npm test",
     "lint": "eslint \"src/**/*.js\" \"src/*.js\" \"test/*.js\" \"src/**/*.ts\" \"src/*.ts\"",
     "test": "tap --no-coverage test/*.js",
     "tsc": "npx tsc",
