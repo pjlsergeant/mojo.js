@@ -1,14 +1,14 @@
 import {promisify} from 'util';
 
-export async function captureOutput (options, fn) {
+export async function captureOutput (options: any, fn: Function) {
   if (typeof options === 'function') fn = options;
   if (options.stdout === undefined) options.stdout = true;
 
-  const output = [];
+  const output: any[] = [];
   const stdoutWrite = process.stdout.write;
   const stderrWrite = process.stderr.write;
-  if (options.stdout) process.stdout.write = chunk => output.push(chunk);
-  if (options.stderr) process.stderr.write = chunk => output.push(chunk);
+  if (options.stdout) process.stdout.write = (chunk: any) :any => output.push(chunk);
+  if (options.stderr) process.stderr.write = (chunk: any) :any => output.push(chunk);
 
   try {
     await fn();
@@ -20,7 +20,7 @@ export async function captureOutput (options, fn) {
   return output.length && Buffer.isBuffer(output[0]) ? Buffer.concat(output) : output.join('');
 }
 
-export function decodeURIComponentSafe (value) {
+export function decodeURIComponentSafe (value: string) {
   try {
     return decodeURIComponent(value);
   } catch (error) {
@@ -30,7 +30,7 @@ export function decodeURIComponentSafe (value) {
 
 export const sleep = promisify(setTimeout);
 
-export function tablify (rows = []) {
+export function tablify (rows: String[][]) {
   const spec = [];
 
   const table = rows.map(row => {
