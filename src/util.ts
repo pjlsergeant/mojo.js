@@ -1,14 +1,17 @@
 import {promisify} from 'util';
 
-export async function captureOutput (options: any, fn: Function) {
+export async function captureOutput (options: {
+  stderr?: boolean,
+  stdout?: boolean
+}, fn: Function) {
   if (typeof options === 'function') fn = options;
   if (options.stdout === undefined) options.stdout = true;
 
-  const output: any[] = [];
+  const output: Uint8Array[] & string[] = [];
   const stdoutWrite = process.stdout.write;
   const stderrWrite = process.stderr.write;
-  if (options.stdout) process.stdout.write = (chunk: any) :any => output.push(chunk);
-  if (options.stderr) process.stderr.write = (chunk: any) :any => output.push(chunk);
+  if (options.stdout) process.stdout.write = (chunk: Uint8Array & string) :boolean => !!output.push(chunk);
+  if (options.stderr) process.stderr.write = (chunk: Uint8Array & string) :boolean => !!output.push(chunk);
 
   try {
     await fn();
@@ -30,7 +33,7 @@ export function decodeURIComponentSafe (value: string) {
 
 export const sleep = promisify(setTimeout);
 
-export function tablify (rows: String[][]) {
+export function tablify (rows: string[][]) {
   const spec = [];
 
   const table = rows.map(row => {
