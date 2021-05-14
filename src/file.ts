@@ -1,16 +1,24 @@
-import fs from 'fs';
-import fsPromises from 'fs/promises';
-import os from 'os';
-import path from 'path';
+import * as fs from 'fs';
+import * as fsPromises from 'fs/promises';
+import * as os from 'os';
+import * as path from 'path';
 import StackUtils from 'stack-utils';
-import url from 'url';
+import * as url from 'url';
+
+export type FileListOptions = {
+  hidden?: boolean,
+  dir?: boolean,
+  recursive?: boolean
+};
 
 export default class File {
-  constructor (...parts) {
-    this._path = parts.length === 0 ? process.cwd() : parts.length === 1 ? parts[0] : path.join(...parts);
+  protected _path: string;
+
+  constructor (...parts : string[]) {
+    this._path = String( parts.length === 0 ? process.cwd() : parts.length === 1 ? parts[0] : path.join(...parts) );
   }
 
-  basename (ext) {
+  basename (ext : string) {
     return path.basename(this._path, ext);
   }
 
@@ -18,7 +26,7 @@ export default class File {
     return new File(url.fileURLToPath(new StackUtils().capture(3)[2].getFileName()));
   }
 
-  child (...parts) {
+  child (...parts: string[]) {
     return new File(this._path, ...parts);
   }
 
@@ -50,7 +58,7 @@ export default class File {
     return fsPromises.access(this._path, fs.constants.R_OK).then(() => true, () => false);
   }
 
-  async * list (options = {}) {
+  async * list (options : FileListOptions = {}) {
     const files = await fsPromises.readdir(this._path, {withFileTypes: true});
 
     for (const file of files) {
@@ -66,7 +74,8 @@ export default class File {
     }
   }
 
-  mkdir (options) {
+  // fs.MakeDirectoryOptions is defined, but fs.d.ts has no equivs for ReadFileOptions etc
+  mkdir (options: fs.MakeDirectoryOptions) {
     return fsPromises.mkdir(this._path, options);
   }
 
@@ -78,7 +87,7 @@ export default class File {
     return fs.readFileSync(this._path, options);
   }
 
-  relative (to) {
+  relative (to: string) {
     return new File(path.relative(this._path, '' + to));
   }
 
@@ -90,11 +99,11 @@ export default class File {
     return fsPromises.rm(this._path, options);
   }
 
-  sibling (...parts) {
+  sibling (...parts: string[]) {
     return this.dirname().child(...parts);
   }
 
-  stat (options) {
+  stat (options: fs.StatOptions) {
     return fsPromises.stat(this._path, options);
   }
 
